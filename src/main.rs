@@ -17,7 +17,7 @@ mod full_viewport;
 fn main() {
     let mut app = App::build();
     app
-        .insert_resource(Msaa { samples: 2 })
+        .insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         .insert_resource(WindowDescriptor {
             title: "Nodieval".to_owned(),
