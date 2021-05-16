@@ -1,6 +1,6 @@
 # This make file contains tasks for the web build of the game
-#   Serve the web version locally by running `cargo make serve`
-#   Build a web release by running `cargo make release` (release is the `build/web` directory)
+# Serve the web version locally by running `cargo make serve`
+# Build a web release by running `cargo make release` (release is the `build/web` directory)
 
 [env]
 TARGET_DIR = "target/wasm32-unknown-unknown/release/"
@@ -24,15 +24,15 @@ command = "cargo"
 
 # Due to https://github.com/mrk-its/bevy_webgl2/issues/35 we need a specific version at the moment
 [tasks.wasm-bindgen-cli]
-#install_crate = {crate_name = "wasm-bindgen-cli", binary = "wasm-bindgen", test_arg="--help"}
+# install_crate = {crate_name = "wasm-bindgen-cli", binary = "wasm-bindgen", test_arg="--help"}
 command = "cargo"
-args = ["install", "wasm-bindgen-cli", "--force", "--version", "0.2.69"]
+args = ["install", "wasm-bindgen-cli", "--version", "0.2.69"]
 
 [tasks.basic-http-server]
 install_crate = {crate_name = "basic-http-server", binary = "basic-http-server", test_arg="--help"}
 
 [tasks.copy-files-for-release]
-dependencies = ["copy-wasm-to-build-dir", "copy-wasm-js-to-build-dir", "copy-wasm_bg-to-build-dir", "copy-index-to-build-dir", "copy-assets-to-build-dir", "copy-credits-to-build-dir"]
+dependencies = ["copy-wasm-to-build-dir", "copy-wasm-js-to-build-dir", "copy-wasm_bg-to-build-dir", "copy-index-to-build-dir", "copy-assets-to-build-dir"]
 
 [tasks.copy-wasm-to-build-dir]
 args = ["${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm", "build/web/target/"]
@@ -51,11 +51,6 @@ dependencies = ["create-build-dir", "build-and-bind-wasm"]
 
 [tasks.copy-assets-to-build-dir]
 args = ["-r", "assets", "build/web/"]
-command = "cp"
-dependencies = ["create-build-dir"]
-
-[tasks.copy-credits-to-build-dir]
-args = ["-r", "credits", "build/web/"]
 command = "cp"
 dependencies = ["create-build-dir"]
 
@@ -80,4 +75,5 @@ script = [
     '''
     p = canonicalize "build/web/target"
     mkdir ${p}
-    ''']
+    '''
+]
