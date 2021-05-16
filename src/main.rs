@@ -20,7 +20,9 @@ fn main() {
         .insert_resource(Msaa { samples: 2 })
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         .insert_resource(WindowDescriptor {
-            title: "Nodieval".to_string(),
+            title: "Nodieval".to_owned(),
+            width: 800.,
+            height: 600.,
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

@@ -35,17 +35,17 @@ install_crate = {crate_name = "basic-http-server", binary = "basic-http-server",
 dependencies = ["copy-wasm-to-build-dir", "copy-wasm-js-to-build-dir", "copy-wasm_bg-to-build-dir", "copy-index-to-build-dir", "copy-assets-to-build-dir"]
 
 [tasks.copy-wasm-to-build-dir]
-args = ["${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm", "build/web/target/"]
+args = ["${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm", "build/web/"]
 command = "cp"
 dependencies = ["create-build-dir", "build-and-bind-wasm"]
 
 [tasks.copy-wasm-js-to-build-dir]
-args = ["${TARGET_DIR}wasm.js", "build/web/target/"]
+args = ["${TARGET_DIR}wasm.js", "build/web/"]
 command = "cp"
 dependencies = ["create-build-dir", "build-and-bind-wasm"]
 
 [tasks.copy-wasm_bg-to-build-dir]
-args = ["${TARGET_DIR}wasm_bg.wasm", "build/web/target/"]
+args = ["${TARGET_DIR}wasm_bg.wasm", "build/web/"]
 command = "cp"
 dependencies = ["create-build-dir", "build-and-bind-wasm"]
 
@@ -73,7 +73,7 @@ dependencies = ["create-build-dir"]
 script_runner = "@duckscript"
 script = [
     '''
-    p = canonicalize "build/web/target"
+    p = canonicalize "build/web"
     mkdir ${p}
     '''
 ]
