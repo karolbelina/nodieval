@@ -24,23 +24,24 @@ jobs:
           override: true
       - name: Remove build script
         run: |
-          rm build.rs
+          rm client/build.rs
       - name: Build release
         run: |
           cargo build --release --features native
+        working-directory: ./client
       - name: Create release
         run: |
-          mkdir -p build/macos/src/Game.app/Contents/MacOS/assets
-          cp -r assets/ build/macos/src/Game.app/Contents/MacOS/assets
-          cp target/release/${{ env.GAME_EXECUTABLE_NAME }} build/macos/src/Game.app/Contents/MacOS/
-          strip build/macos/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
-          mv build/macos/src/Game.app build/macos/src/${{ env.GAME_OSX_APP_NAME }}.app
-          hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder build/macos/src ${{ env.GAME_EXECUTABLE_NAME }}.dmg
+          mkdir -p client/build/macos/src/Game.app/Contents/MacOS/assets
+          cp -r client/assets/ client/build/macos/src/Game.app/Contents/MacOS/assets
+          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/build/macos/src/Game.app/Contents/MacOS/
+          strip client/build/macos/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
+          mv client/build/macos/src/Game.app client/build/macos/src/${{ env.GAME_OSX_APP_NAME }}.app
+          hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder client/build/macos/src client/${{ env.GAME_EXECUTABLE_NAME }}.dmg
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_macos.dmg
-          path: ${{ env.GAME_EXECUTABLE_NAME }}.dmg
+          path: client/${{ env.GAME_EXECUTABLE_NAME }}.dmg
 
   build-linux:
     runs-on: ubuntu-18.04
@@ -58,19 +59,20 @@ jobs:
       - name: Build release
         run: |
           cargo build --release --features native
+        working-directory: ./client
       - name: Prepare release
         run: |
-          strip target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          chmod +x target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          mv target/release/${{ env.GAME_EXECUTABLE_NAME }} .
+          strip client/target/release/${{ env.GAME_EXECUTABLE_NAME }}
+          chmod +x client/target/release/${{ env.GAME_EXECUTABLE_NAME }}
+          mv client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client
       - name: Bundle release
         run: |
-          tar -czf ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz ${{ env.GAME_EXECUTABLE_NAME }} assets
+          tar -C client -czf client/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz ${{ env.GAME_EXECUTABLE_NAME }} assets
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
-          path: ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
+          path: client/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
 
   build-windows:
     runs-on: windows-latest
@@ -86,19 +88,20 @@ jobs:
       - name: Build release
         run: |
           cargo build --release --features native
+        working-directory: ./client
       - name: Prepare release
         run: |
-          mkdir target/release/assets && cp -r assets target/release/assets
+          mkdir client/target/release/assets && cp -r client/assets client/target/release/assets
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
-          files: target/release/assets/ target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe
-          dest: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
+          files: client/target/release/assets/ client/target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe
+          dest: client/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
-          path: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
+          path: client/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
 
   build-web:
     runs-on: ubuntu-latest
@@ -122,13 +125,14 @@ jobs:
       - name: Build Release
         run: |
           cargo make release
+        working-directory: ./client
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
-          files: build/web/
-          dest: ${{ env.GAME_EXECUTABLE_NAME }}_web.zip
+          files: client/build/web/
+          dest: client/${{ env.GAME_EXECUTABLE_NAME }}_web.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_web.zip
-          path: ${{ env.GAME_EXECUTABLE_NAME }}_web.zip
+          path: client/${{ env.GAME_EXECUTABLE_NAME }}_web.zip

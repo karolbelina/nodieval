@@ -983,6 +983,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2df960f5d869b2dd8532793fde43eb5427cceb126c929747a26823ab0eeb536"
 
 [[package]]
+name = "core"
+version = "0.1.0"
+
+[[package]]
 name = "core-foundation"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2268,6 +2272,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy_webgl2",
+ "core",
  "embed-resource",
  "game_plugin",
  "gloo-events",
