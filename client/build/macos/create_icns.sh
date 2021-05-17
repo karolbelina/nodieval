@@ -1,4 +1,3 @@
-rm -rf AppIcon.iconset/*
 mkdir -p AppIcon.iconset
 sips -z 16 16     icon_1024x1024.png --out AppIcon.iconset/icon_16x16.png
 sips -z 32 32     icon_1024x1024.png --out AppIcon.iconset/icon_16x16@2x.png
