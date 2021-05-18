@@ -35,20 +35,19 @@ install_crate = {crate_name = "basic-http-server", binary = "basic-http-server",
 script_runner = "@duckscript"
 script = [
     '''
-	target = set "./build/web/target"
+	dist = set "./dist"
 	web = set "./build/web"
 	windows = set "./build/windows"
 
-	rm -r ${web}
-	mkdir ${target}
+	rm -r ${dist}
+	mkdir ${dist}
 
-	cp ${windows}/icon.ico ${web}/icon.ico
-	mv ${web}/icon.ico ${web}/favicon.ico
+	cp ${windows}/icon.ico ${dist}/favicon.ico
 
-	cp ${TARGET_DIR}/${CARGO_MAKE_CRATE_NAME}.wasm ${target}/${CARGO_MAKE_CRATE_NAME}.wasm
-	cp ${TARGET_DIR}/wasm.js ${target}/wasm.js
-	cp ${TARGET_DIR}/wasm_bg.wasm ${target}/wasm_bg.wasm
-	cp ./index.html ${web}/index.html
-	cp ./assets ${web}
+	cp ${TARGET_DIR}/${CARGO_MAKE_CRATE_NAME}.wasm ${dist}/${CARGO_MAKE_CRATE_NAME}.wasm
+	cp ${TARGET_DIR}/wasm.js ${dist}/wasm.js
+	cp ${TARGET_DIR}/wasm_bg.wasm ${dist}/wasm_bg.wasm
+	cp ${web}/index.html ${dist}/index.html
+	cp ./assets ${dist}
     '''
 ]

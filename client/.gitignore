@@ -1,3 +1,1 @@
-build/web/
-build/macos/AppIcon.iconset/
-build/macos/src/Game.app/Contents/Resources/
+dist

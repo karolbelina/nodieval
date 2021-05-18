@@ -29,35 +29,38 @@ jobs:
         run: |
           cargo build --release --features native
         working-directory: ./client
+      - name: Prepare dist directory
+        run: |
+          mkdir client/dist && cp -a client/build/macos/. client/dist
       - name: Prepare icons
         run: |
-          mkdir -p client/build/macos/AppIcon.iconset
-          sips -z 16 16   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_16x16.png
-          sips -z 32 32   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_16x16@2x.png
-          sips -z 32 32   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_32x32.png
-          sips -z 64 64   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_32x32@2x.png
-          sips -z 128 128 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_128x128.png
-          sips -z 256 256 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_128x128@2x.png
-          sips -z 256 256 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_256x256.png
-          sips -z 512 512 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_256x256@2x.png
-          sips -z 512 512 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_512x512.png
-          cp client/build/macos/icon_1024x1024.png client/build/macos/AppIcon.iconset/icon_512x512@2x.png
-          iconutil -c icns client/build/macos/AppIcon.iconset
-          mkdir -p client/build/macos/src/Game.app/Contents/Resources
-          mv client/build/macos/AppIcon.icns client/build/macos/src/Game.app/Contents/Resources/
+          mkdir -p client/dist/AppIcon.iconset
+          sips -z 16 16   client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_16x16.png
+          sips -z 32 32   client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_16x16@2x.png
+          sips -z 32 32   client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_32x32.png
+          sips -z 64 64   client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_32x32@2x.png
+          sips -z 128 128 client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_128x128.png
+          sips -z 256 256 client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_128x128@2x.png
+          sips -z 256 256 client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_256x256.png
+          sips -z 512 512 client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_256x256@2x.png
+          sips -z 512 512 client/dist/icon_1024x1024.png --out client/dist/AppIcon.iconset/icon_512x512.png
+          cp client/dist/icon_1024x1024.png client/dist/AppIcon.iconset/icon_512x512@2x.png
+          iconutil -c icns client/dist/AppIcon.iconset
+          mkdir -p client/dist/src/Game.app/Contents/Resources
+          mv client/dist/AppIcon.icns client/dist/src/Game.app/Contents/Resources/
       - name: Create release
         run: |
-          mkdir -p client/build/macos/src/Game.app/Contents/MacOS/assets
-          cp -r client/assets/ client/build/macos/src/Game.app/Contents/MacOS/assets
-          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/build/macos/src/Game.app/Contents/MacOS/
-          strip client/build/macos/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
-          mv client/build/macos/src/Game.app client/build/macos/src/${{ env.GAME_OSX_APP_NAME }}.app
-          hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder client/build/macos/src client/${{ env.GAME_EXECUTABLE_NAME }}.dmg
+          mkdir -p client/dist/src/Game.app/Contents/MacOS/assets
+          cp -r client/assets/. client/dist/src/Game.app/Contents/MacOS/assets
+          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist/src/Game.app/Contents/MacOS/
+          strip client/dist/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
+          mv client/dist/src/Game.app client/dist/src/${{ env.GAME_OSX_APP_NAME }}.app
+          hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder client/dist/src client/dist/${{ env.GAME_EXECUTABLE_NAME }}.dmg
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_macos.dmg
-          path: client/${{ env.GAME_EXECUTABLE_NAME }}.dmg
+          path: client/dist/${{ env.GAME_EXECUTABLE_NAME }}.dmg
 
   build-linux:
     runs-on: ubuntu-18.04
@@ -78,17 +81,19 @@ jobs:
         working-directory: ./client
       - name: Prepare release
         run: |
-          strip client/target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          chmod +x client/target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          mv client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client
+          mkdir client/dist
+          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist
+          cp -r client/assets client/dist/assets
+          strip client/dist/${{ env.GAME_EXECUTABLE_NAME }}
+          chmod +x client/dist/${{ env.GAME_EXECUTABLE_NAME }}
       - name: Bundle release
         run: |
-          tar -C client -czf client/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz ${{ env.GAME_EXECUTABLE_NAME }} assets
+          tar -C client/dist -czf client/dist/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz ${{ env.GAME_EXECUTABLE_NAME }} assets
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
-          path: client/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
+          path: client/dist/${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
 
   build-windows:
     runs-on: windows-latest
@@ -107,17 +112,19 @@ jobs:
         working-directory: ./client
       - name: Prepare release
         run: |
-          mkdir client/target/release/assets && cp -r client/assets client/target/release/assets
+          mkdir client/dist
+          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe client/dist
+          mkdir client/dist/assets && cp -r client/assets client/dist/assets
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
-          files: client/target/release/assets/ client/target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe
-          dest: client/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
+          files: client/dist/assets client/dist/${{ env.GAME_EXECUTABLE_NAME }}.exe
+          dest: client/dist/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
-          path: client/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
+          path: client/dist/${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
 
   build-web:
     runs-on: ubuntu-latest
@@ -145,10 +152,10 @@ jobs:
       - name: Zip release
         uses: papeloto/action-zip@v1
         with:
-          files: client/build/web/
-          dest: client/${{ env.GAME_EXECUTABLE_NAME }}_web.zip
+          files: client/dist
+          dest: client/dist/${{ env.GAME_EXECUTABLE_NAME }}_web.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.GAME_EXECUTABLE_NAME }}_web.zip
-          path: client/${{ env.GAME_EXECUTABLE_NAME }}_web.zip
+          path: client/dist/${{ env.GAME_EXECUTABLE_NAME }}_web.zip
