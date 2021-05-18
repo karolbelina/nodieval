@@ -29,6 +29,22 @@ jobs:
         run: |
           cargo build --release --features native
         working-directory: ./client
+      - name: Prepare icons
+        run: |
+          mkdir -p client/build/macos/AppIcon.iconset
+          sips -z 16 16   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_16x16.png
+          sips -z 32 32   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_16x16@2x.png
+          sips -z 32 32   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_32x32.png
+          sips -z 64 64   client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_32x32@2x.png
+          sips -z 128 128 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_128x128.png
+          sips -z 256 256 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_128x128@2x.png
+          sips -z 256 256 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_256x256.png
+          sips -z 512 512 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_256x256@2x.png
+          sips -z 512 512 client/build/macos/icon_1024x1024.png --out client/build/macos/AppIcon.iconset/icon_512x512.png
+          cp client/build/macos/icon_1024x1024.png client/build/macos/AppIcon.iconset/icon_512x512@2x.png
+          iconutil -c icns client/build/macos/AppIcon.iconset
+          mkdir -p client/build/macos/src/Game.app/Contents/Resources
+          mv client/build/macos/AppIcon.icns client/build/macos/src/Game.app/Contents/Resources/
       - name: Create release
         run: |
           mkdir -p client/build/macos/src/Game.app/Contents/MacOS/assets
@@ -36,7 +52,6 @@ jobs:
           cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/build/macos/src/Game.app/Contents/MacOS/
           strip client/build/macos/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
           mv client/build/macos/src/Game.app client/build/macos/src/${{ env.GAME_OSX_APP_NAME }}.app
-          cd client/build/macos; ./create_icns.sh
           hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder client/build/macos/src client/${{ env.GAME_EXECUTABLE_NAME }}.dmg
       - name: Upload artifact
         uses: actions/upload-artifact@v2
