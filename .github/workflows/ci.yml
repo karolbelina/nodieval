@@ -19,9 +19,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - name: Remove build script
         run: |
           rm client/build.rs
@@ -52,7 +49,7 @@ jobs:
         run: |
           mkdir -p client/dist/src/Game.app/Contents/MacOS/assets
           cp -r client/assets/. client/dist/src/Game.app/Contents/MacOS/assets
-          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist/src/Game.app/Contents/MacOS/
+          cp target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist/src/Game.app/Contents/MacOS/
           strip client/dist/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
           mv client/dist/src/Game.app client/dist/src/${{ env.GAME_OSX_APP_NAME }}.app
           hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder client/dist/src client/dist/${{ env.GAME_EXECUTABLE_NAME }}.dmg
@@ -70,9 +67,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
@@ -82,7 +76,7 @@ jobs:
       - name: Prepare release
         run: |
           mkdir client/dist
-          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist
+          cp target/release/${{ env.GAME_EXECUTABLE_NAME }} client/dist
           cp -r client/assets client/dist/assets
           strip client/dist/${{ env.GAME_EXECUTABLE_NAME }}
           chmod +x client/dist/${{ env.GAME_EXECUTABLE_NAME }}
@@ -103,9 +97,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - name: Build release
         run: |
           cargo build --release --features native
@@ -113,7 +104,7 @@ jobs:
       - name: Prepare release
         run: |
           mkdir client/dist
-          cp client/target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe client/dist
+          cp target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe client/dist
           mkdir client/dist/assets && cp -r client/assets client/dist/assets
       - name: Zip release
         uses: papeloto/action-zip@v1
@@ -134,9 +125,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install cargo-make
