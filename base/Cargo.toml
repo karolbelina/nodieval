@@ -1,9 +1,9 @@
 [package]
-name = "core"
+name = "base"
 version = "0.1.0"
 authors = ["Karol Belina <karolbelina@gmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+publish = false
 
 [dependencies]
+num = "0.4"

@@ -1,7 +1,7 @@
 mod paths;
 
-use crate::loading::paths::PATHS;
-use crate::GameState;
+use paths::PATHS;
+use crate::game::GameState;
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioSource;

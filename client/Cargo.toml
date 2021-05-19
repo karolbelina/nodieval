@@ -1,9 +1,9 @@
 [package]
 name = "nodieval"
 version = "0.1.0"
-publish = false
 authors = ["Karol Belina <karolbelina@gmail.com>"]
 edition = "2018"
+publish = false
 
 [profile.dev]
 opt-level = 1
@@ -14,12 +14,11 @@ default = [
     "bevy/bevy_winit",
     "bevy/render",
     "bevy/png",
-    "game_plugin/default"
+    "bevy_kira_audio/ogg"
 ]
 
 native = [
     "bevy/bevy_wgpu",
-    "game_plugin/native"
 ]
 
 web = [
@@ -34,10 +33,11 @@ dev = [
 ]
 
 [dependencies]
+base = { path = "../base" }
 bevy = { version = "0.5.0", default-features = false }
-game_plugin = { path = "game_plugin" }
+bevy_kira_audio = { version = "0.4.0" }
+rand = "0.8.3"
 winit = "0.24.0"
-core = { path = "../core" }
 
 bevy_webgl2 = { version = "0.5.0", optional = true }
 web-sys = { version = "0.3.45", features = ["Element", "Document", "Window"], optional = true }

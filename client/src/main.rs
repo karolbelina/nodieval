@@ -6,13 +6,15 @@ use bevy_webgl2;
 
 use bevy::prelude::{App, ClearColor, Color, WindowDescriptor, Msaa};
 use bevy::DefaultPlugins;
-use game_plugin::GamePlugin;
+use game::GamePlugin;
 
 #[cfg(target_arch = "wasm32")]
 use full_viewport::FullViewportPlugin;
 
 #[cfg(target_arch = "wasm32")]
 mod full_viewport;
+
+mod game;
 
 fn main() {
     let mut app = App::build();
