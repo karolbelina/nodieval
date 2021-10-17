@@ -1,7 +1,7 @@
 #![feature(const_fn_trait_bound)]
 
-use std::ops::{Add, Mul, Sub, Div};
 use num::traits::Signed;
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Default, Debug)]
 pub struct HexCoord<T> {
@@ -16,7 +16,7 @@ impl<T> HexCoord<T> {
     }
 
     #[inline]
-    pub fn q(&self) -> T
+    pub const fn q(&self) -> T
     where
         T: Copy,
     {
@@ -24,7 +24,7 @@ impl<T> HexCoord<T> {
     }
 
     #[inline]
-    pub fn r(&self) -> T
+    pub const fn r(&self) -> T
     where
         T: Copy,
     {
@@ -32,7 +32,7 @@ impl<T> HexCoord<T> {
     }
 
     #[inline]
-    pub fn s(&self) -> T
+    pub const fn s(&self) -> T
     where
         T: Copy,
     {
@@ -52,7 +52,6 @@ impl<T> HexCoord<T> {
     {
         (self - other).length()
     }
-
 }
 
 impl HexCoord<isize> {
@@ -117,14 +116,17 @@ where
 }
 
 const HEX_DIRECTIONS: [HexCoord<isize>; 6] = [
-    HexCoord::from_qrs(1, 0, -1), HexCoord::from_qrs(1, -1, 0), HexCoord::from_qrs(0, -1, 1),
-    HexCoord::from_qrs(-1, 0, 1), HexCoord::from_qrs(-1, 1, 0), HexCoord::from_qrs(0, 1, -1),
+    HexCoord::from_qrs(1, 0, -1),
+    HexCoord::from_qrs(1, -1, 0),
+    HexCoord::from_qrs(0, -1, 1),
+    HexCoord::from_qrs(-1, 0, 1),
+    HexCoord::from_qrs(-1, 1, 0),
+    HexCoord::from_qrs(0, 1, -1),
 ];
 
 pub fn hex_direction(direction: isize) -> HexCoord<isize> {
     HEX_DIRECTIONS[direction.rem_euclid(6) as usize]
 }
-
 
 // #[cfg(test)]
 // mod tests {

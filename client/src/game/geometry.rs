@@ -1,10 +1,11 @@
-use bevy::prelude::*;
 use base::HexCoord;
-use std::f32::consts::PI;
+use bevy::prelude::*;
 use bevy::render::{mesh::Indices, pipeline::PrimitiveTopology};
+use std::f32::consts::PI;
 
 pub fn hex_to_point(size: f32, hex_coord: &HexCoord<isize>) -> Vec2 {
-    let x = size * (3_f32.sqrt() * hex_coord.q() as f32 + 3_f32.sqrt() / 2_f32 * hex_coord.r() as f32);
+    let x =
+        size * (3_f32.sqrt() * hex_coord.q() as f32 + 3_f32.sqrt() / 2_f32 * hex_coord.r() as f32);
     let y = size * (3_f32 / 2_f32 * hex_coord.r() as f32);
     Vec2::new(x, y)
 }
@@ -34,7 +35,10 @@ pub fn generate_hex_mesh() -> Mesh {
     //     6
     let mut pts = [[f32::default(); 3]; 7];
     pts[0] = [0.0, 0.0, 0.0];
-    for (i, corner) in hex_corners(1.0, &HexCoord::<isize>::from_qr(0, 0)).iter().enumerate() {
+    for (i, corner) in hex_corners(1.0, &HexCoord::<isize>::from_qr(0, 0))
+        .iter()
+        .enumerate()
+    {
         pts[i + 1] = [corner.x, 0.0, corner.y];
     }
     let indices = vec![0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 5, 4, 0, 6, 5, 0, 1, 6];

@@ -1,41 +1,26 @@
-mod actions;
-mod audio;
 mod geometry;
-mod loading;
-mod menu;
-mod player;
 
-use crate::game::actions::ActionsPlugin;
-use crate::game::audio::InternalAudioPlugin;
-use crate::game::loading::LoadingPlugin;
-use crate::game::menu::MenuPlugin;
-use crate::game::player::PlayerPlugin;
+use std::f32::consts::PI;
 
 use bevy::app::AppBuilder;
+use bevy::pbr::AmbientLight;
 // use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
-
-#[derive(Clone, Eq, PartialEq, Debug, Hash)]
-enum GameState {
-    Loading,
-    Playing,
-    Menu,
-}
 
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_state(GameState::Playing)
+        app
+            .insert_resource(AmbientLight {
+                color: Color::WHITE,
+                brightness: 2.0,
+            })
             .add_startup_system(spawn_entities.system())
             .add_startup_system(generate_hex.system())
+            // .add_startup_system(setup_ambient_light.system())
             .add_system(keyboard_controls.system())
-            // .add_plugin(LoadingPlugin)
-            // .add_plugin(ActionsPlugin)
-            // .add_plugin(MenuPlugin)
-            // .add_plugin(InternalAudioPlugin)
-            // .add_plugin(PlayerPlugin)
             // .add_plugin(FrameTimeDiagnosticsPlugin::default())
             // .add_plugin(LogDiagnosticsPlugin::default())
             ;
@@ -46,7 +31,7 @@ fn spawn_entities(mut commands: Commands) {
     let mut camera = OrthographicCameraBundle::new_3d();
     camera.orthographic_projection.scale = 4.0;
     camera.transform = Transform::from_matrix(Mat4::from_rotation_translation(
-        Quat::from_xyzw(2_f32.sqrt() / 2.0, 0.0, 0.0, -(2_f32.sqrt() / 2.0)).normalize(),
+        Quat::from_rotation_ypr(-PI / 2.0, -PI / 2.0, 0.0).normalize(),
         Vec3::new(0.0, 20.0, 0.0),
     ));
 
@@ -58,20 +43,32 @@ fn spawn_entities(mut commands: Commands) {
     // });
 }
 
+// fn setup_ambient_light(mut ambient_light: ResMut<AmbientLight>) {
+//     ambient_light.color = Color::WHITE;
+// }
+
 fn generate_hex(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let mesh = meshes.add(geometry::generate_hex_mesh());
-    let color = Color::rgb(0.0, 0.0, 0.0);
-    add_hex(
-        Vec3::new(0.0, 0.0, 0.0),
-        color,
-        mesh.clone(),
-        &mut commands,
-        &mut materials,
-    );
+    let color = Color::rgb(1.0, 1.0, 1.0);
+
+    use rand::distributions::{Distribution, Uniform};
+
+    let between = Uniform::from(-10.0..10.0);
+    let mut rng = rand::thread_rng();
+
+    for _ in 0..100 {
+        add_hex(
+            Vec3::new(between.sample(&mut rng), between.sample(&mut rng), between.sample(&mut rng)),
+            color,
+            mesh.clone(),
+            &mut commands,
+            &mut materials,
+        );
+    }
 }
 
 fn add_hex(
@@ -96,9 +93,9 @@ pub fn keyboard_controls(
 ) {
     let (_, mut transform) = query.iter_mut().next().unwrap();
     let speed = 10.;
-    let forward = Vec3::new(1., 0., 0.);
-    let left = Vec3::new(0., 0., -1.);
-    let up = Vec3::new(0., 1., 0.);
+    let forward = Vec3::X;
+    let right = Vec3::Z;
+    let up = Vec3::Y;
 
     let mut pos = transform.translation.clone();
     if input.pressed(KeyCode::W) {
@@ -106,10 +103,10 @@ pub fn keyboard_controls(
     } else if input.pressed(KeyCode::S) {
         pos -= speed * forward * time.delta_seconds();
     }
-    if input.pressed(KeyCode::A) {
-        pos += speed * left * time.delta_seconds();
-    } else if input.pressed(KeyCode::D) {
-        pos -= speed * left * time.delta_seconds();
+    if input.pressed(KeyCode::D) {
+        pos += speed * right * time.delta_seconds();
+    } else if input.pressed(KeyCode::A) {
+        pos -= speed * right * time.delta_seconds();
     }
     if input.pressed(KeyCode::Q) {
         pos += speed * up * time.delta_seconds();

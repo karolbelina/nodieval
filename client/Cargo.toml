@@ -14,7 +14,6 @@ default = [
     "bevy/bevy_winit",
     "bevy/render",
     "bevy/png",
-    "bevy_kira_audio/ogg"
 ]
 
 native = [
@@ -35,7 +34,6 @@ dev = [
 [dependencies]
 base = { path = "../base" }
 bevy = { version = "0.5.0", default-features = false }
-bevy_kira_audio = { version = "0.4.0" }
 rand = "0.8.3"
 winit = "0.24.0"
 
