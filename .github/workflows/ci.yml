@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install rust toolchain
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
       - name: Remove build script
         run: |
@@ -65,10 +65,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install rust toolchain
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
-      - name: Install Dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Install dependencies
+        run: |
+          sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
         run: |
           cargo build --release --features native
@@ -95,7 +96,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install rust toolchain
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
       - name: Build release
         run: |
@@ -123,17 +124,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install rust toolchain
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
-      - name: Install Dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Install dependencies
+        run: |
+          sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install cargo-make
         run: |
           cargo install cargo-make
-      - name: Add wasm target
+      - name: Add WASM target
         run: |
           rustup target add wasm32-unknown-unknown
-      - name: Build Release
+      - name: Build release
         run: |
           cargo make release
         working-directory: ./client
